@@ -20,4 +20,8 @@ from app01 import views
 urlpatterns = [
     path('index/', views.index),
     path('login/', views.login),
+
+    path('user/list/', views.user_list),
+    path('user/add/', views.user_add),
+    path('user/<int:nid>/edit', views.user_edit),
 ]
