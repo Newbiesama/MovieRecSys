@@ -1,14 +1,14 @@
 {% extends "layout.html" %}
 
-{% block title %} 用户列表 {% endblock %}
+{% block title %} 管理员列表 {% endblock %}
 
 {% block content %}
 
     <div class="container">
         <div style="margin-bottom: 10px">
-            <a href="/user/add/" class="btn btn-success">
+            <a href="/admin/add/" class="btn btn-success">
                 <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
-                新建用户
+                新建管理员
             </a>
             <div style="float: right; width: 300px">
                 <form method="get">
@@ -27,23 +27,21 @@
         <table class="table table-striped">
             <thead>
             <tr>
-                <th>ID</th>
+                <th>#</th>
                 <th>用户名</th>
-                <th>手机号</th>
-                <th>创建日期</th>
+                <th>密码</th>
                 <th>操作</th>
             </tr>
             </thead>
             <tbody>
-            {% for user in user_list %}
+            {% for obj in page_queryset %}
                 <tr>
-                    <th scope="row">{{ user.id }}</th>
-                    <td>{{ user.name }}</td>
-                    <td>{{ user.phone }}</td>
-                    <td>{{ user.create_time|date:"Y-m-d"}}</td>
+                    <th scope="row">{{ obj.id }}</th>
+                    <td>{{ obj.name }}</td>
+                    <td>{{ obj.psw }}</td>
                     <td>
-                        <a href="/user/{{ user.id }}/edit" class="btn btn-primary btn-xs">编辑</a>
-                        <a href="/user/{{ user.id }}/delete" class="btn btn-danger btn-xs">删除</a>
+                        <a href="/admin/{{ obj.id }}/edit" class="btn btn-primary btn-xs">编辑</a>
+                        <a href="/admin/{{ obj.id }}/delete" class="btn btn-danger btn-xs">删除</a>
                     </td>
                 </tr>
             {% endfor %}

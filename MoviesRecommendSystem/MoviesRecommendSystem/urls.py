@@ -15,14 +15,32 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from app01 import views
+
+from app01.views import homepage, user, admin, account, task, order
 
 urlpatterns = [
-    path('index/', views.index),
-    path('login/', views.login),
-
-    path('user/list/', views.user_list),
-    path('user/add/', views.user_add),
-    path('user/<int:nid>/edit', views.user_edit),
-    path('user/<int:nid>/delete', views.user_delete),
+    path('index/', homepage.index),
+    # 登录
+    path('login/', account.login),
+    path('logout/', account.logout),
+    path('image/code/', account.image_code),
+    # 用户
+    path('user/list/', user.user_list),
+    path('user/add/', user.user_add),
+    path('user/<int:nid>/edit', user.user_edit),
+    path('user/<int:nid>/delete', user.user_delete),
+    # 管理员
+    path('admin/list/', admin.admin_list),
+    path('admin/add/', admin.admin_add),
+    path('admin/<int:nid>/edit/', admin.admin_edit),
+    path('admin/<int:nid>/delete/', admin.admin_delete),
+    # 任务
+    path('task/', task.task_t),
+    path('task/add/', task.task_add),
+    # 订单
+    path('order/list/', order.order_list),
+    path('order/add/', order.order_add),
+    path('order/delete/', order.order_delete),
+    path('order/detail/', order.order_detail),
+    path('order/edit/', order.order_edit),
 ]
