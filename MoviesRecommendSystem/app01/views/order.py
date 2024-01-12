@@ -1,6 +1,6 @@
 import random
 from datetime import datetime
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from app01 import models
@@ -75,3 +75,4 @@ def order_edit(request):
         form.save()
         return JsonResponse({"status": True})
     return JsonResponse({"status": False, "errors": form.errors})
+

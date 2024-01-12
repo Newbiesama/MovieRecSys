@@ -34,6 +34,8 @@ urlpatterns = [
     path('admin/add/', admin.admin_add),
     path('admin/<int:nid>/edit/', admin.admin_edit),
     path('admin/<int:nid>/delete/', admin.admin_delete),
+    # path('admin/import_g/', admin.import_genre),
+    # path('admin/import_m/', admin.import_movie),
     # 任务
     path('task/', task.task_t),
     path('task/add/', task.task_add),
