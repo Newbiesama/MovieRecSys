@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 
@@ -11,21 +12,26 @@ from app01.utils.bootstrap import BootStrapForm, BootStrapModelForm
 class UserModelForm(BootStrapModelForm):
     """用户信息的ModelForm"""
     psw = forms.CharField(min_length=3, widget=forms.PasswordInput, label="密码")
-    phone = forms.CharField(
-        label="手机号",
-        validators=[RegexValidator(r'^1[3-9]\d{9}$', '手机号格式错误')]
+    email = forms.CharField(
+        label="邮箱",
+        validators=[RegexValidator(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', '邮箱格式错误')]
     )
 
     class Meta:
         model = UserInfo
-        fields = ['name', 'psw']
+        fields = ['name', 'psw', 'email']
 
-    def clean_phone(self):
-        txt_phone = self.cleaned_data["phone"]
-        temp = models.UserInfo.objects.filter(phone=txt_phone).exclude(id=self.instance.pk)
+    def clean_email(self):
+        txt_email = self.cleaned_data["email"]
+        temp = models.UserInfo.objects.filter(email=txt_email).exclude(id=self.instance.pk)
         if temp.exists():
-            raise ValidationError("该手机号已存在")
-        return txt_phone
+            raise ValidationError("该邮箱已存在")
+        return txt_email
+
+    def clean_psw(self):
+        """将输入的密码转为密文"""
+        password = self.cleaned_data.get("psw")
+        return md5(password)
 
 
 class AdminModelForm(BootStrapModelForm):
@@ -38,6 +44,7 @@ class AdminModelForm(BootStrapModelForm):
         fields = ['name', 'psw']
 
     def clean_psw(self):
+        """将输入的密码转为密文"""
         pwd = self.cleaned_data.get("psw")
         return md5(pwd)
 

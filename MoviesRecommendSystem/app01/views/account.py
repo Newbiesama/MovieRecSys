@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 
 from app01 import models
 from app01.utils.checkcode import check_code
-from app01.utils.form import LoginForm, AdminLoginForm
+from app01.utils.form import LoginForm, AdminLoginForm, UserModelForm
 
 
 def login(request):
@@ -31,7 +31,6 @@ def login(request):
         if not obj:
             # 添加错误
             form.add_error("name", "用户名或密码错误")
-            print(form.errors)
             return render(request, "login.html", {'form': form})
 
         # 正确
@@ -90,4 +89,16 @@ def admin_login(request):
 
 
 def register(request):
-    return None
+    if request.method == "GET":
+        form = UserModelForm()
+        return render(request, "register.html", {'form': form})
+    # Post
+    form = UserModelForm(request.POST)
+    if form.is_valid():
+        form.save()
+        obj = models.UserInfo.objects.filter(**form.cleaned_data).first()
+        # 直接登录
+        request.session["info"] = {'id': obj.id, 'name': obj.name}
+        request.session.set_expiry(60 * 60 * 24 * 7)
+        return redirect("/")
+    return render(request, "register.html", {'form': form})
