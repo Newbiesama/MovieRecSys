@@ -1,6 +1,4 @@
 {% extends "layout.html" %}
-{% load static %}
-{% block title %} 首页 {% endblock %}
 {% block CSS %}
     <style>
         .item {
@@ -8,8 +6,8 @@
             float: left;
             font-size: 15px;
             text-align: center;
+            margin: 0 25px 20px 0;
             width: 200px;
-            margin: 0 25px 10px 0;
         }
 
         .item .poster_div {
@@ -17,24 +15,38 @@
             overflow: hidden;
         }
 
+        li {
+            height: 45px;
+            width: 115px;
+        }
+
         .page {
             display: flex;
             justify-content: center;
         }
-
     </style>
 {% endblock %}
+
+
 {% block content %}
     <div class="container">
-        <div class="jumbotron">
-            <h1>简介</h1>
-            <p>首页会展示部分电影，热门电影会展示评分最高的前100部电影，你可以点击任意一部电影查看它的详细介绍</p>
-            <p>你可以给电影评分，当你评分的电影超过10部，就可以查看网站对你的推荐结果</p>
-            <p>使用分类或搜索功能可以帮助你找到电影</p>
+        <div class="panel panel-primary">
+            <div class="panel-heading">电影类别</div>
+            <div class="panel-body">
+                <ul class="nav nav-pills">
+                    {% for genre in genres %}
+                        <li role="presentation" class="{% if gid == genre.id %} active {% endif %}"
+                            style="text-align: center">
+                            <a href="/movie/genre/{{ genre.id }}/">{{ genre.name }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
         </div>
+
     </div>
     <!--展示电影图片用-->
-    <div class="container">
+    <div class="container" style="margin-bottom: 20px">
         {% for movie in queryset %}
             <a href="/movie/detail/{{ movie.id }}" class="item">
                 <div class="poster_div">
@@ -42,6 +54,7 @@
                     <p>{{ movie.name }}
                         <strong style="color:#e09015">{{ movie.get_score }}</strong>
                     </p>
+
                 </div>
             </a>
         {% endfor %}
@@ -54,3 +67,6 @@
     </div>
 
 {% endblock %}
+
+
+

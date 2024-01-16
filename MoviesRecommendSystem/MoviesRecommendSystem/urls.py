@@ -16,14 +16,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from app01.views import homepage, user, admin, account, task, order
+from app01.views import homepage, user, admin, account, task, order, movie
 
 urlpatterns = [
-    path('index/', homepage.index),
-    # 登录
+    path('', homepage.index),
+    # 账号
     path('login/', account.login),
+    path('admin/login/', account.admin_login),
     path('logout/', account.logout),
     path('image/code/', account.image_code),
+    path('register/', account.register),
     # 用户
     path('user/list/', user.user_list),
     path('user/add/', user.user_add),
@@ -36,6 +38,11 @@ urlpatterns = [
     path('admin/<int:nid>/delete/', admin.admin_delete),
     # path('admin/import_g/', admin.import_genre),
     # path('admin/import_m/', admin.import_movie),
+    # path('admin/import_u/', admin.import_user_rating),
+    # 电影
+    path('movie/detail/<int:nid>/', movie.movie_detail),
+    # path('movie/genre/', movie.movie_genre),
+    path('movie/genre/<int:gid>/', movie.movie_genre),
     # 任务
     path('task/', task.task_t),
     path('task/add/', task.task_add),

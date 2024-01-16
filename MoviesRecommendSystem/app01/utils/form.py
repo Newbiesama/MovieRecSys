@@ -5,7 +5,7 @@ from django.core.validators import RegexValidator
 from app01 import models
 from app01.utils.encrypt import md5
 from app01.models import UserInfo, Admin
-from app01.utils.bootstrap import BootStrapModelForm
+from app01.utils.bootstrap import BootStrapForm, BootStrapModelForm
 
 
 class UserModelForm(BootStrapModelForm):
@@ -18,7 +18,7 @@ class UserModelForm(BootStrapModelForm):
 
     class Meta:
         model = UserInfo
-        fields = ['name', 'psw', 'phone', 'create_time']
+        fields = ['name', 'psw']
 
     def clean_phone(self):
         txt_phone = self.cleaned_data["phone"]
@@ -47,3 +47,44 @@ class AdminModelForm(BootStrapModelForm):
         if psw != confirm:
             raise ValidationError("密码不一致")
         return confirm
+
+
+class LoginForm(BootStrapForm):
+    name = forms.CharField(
+        label="用户名",
+        widget=forms.TextInput,
+        required=True,
+    )
+    psw = forms.CharField(
+        label="密码",
+        widget=forms.PasswordInput(render_value=True),
+        required=True,
+    )
+    code = forms.CharField(
+        label="验证码",
+        widget=forms.TextInput,
+        required=True,
+    )
+
+    def clean_password(self):
+        """将输入的密码转为密文"""
+        password = self.cleaned_data.get("psw")
+        return md5(password)
+
+
+class AdminLoginForm(BootStrapForm):
+    name = forms.CharField(
+        label="管理员名",
+        widget=forms.TextInput,
+        required=True,
+    )
+    psw = forms.CharField(
+        label="密码",
+        widget=forms.PasswordInput(render_value=True),
+        required=True,
+    )
+
+    def clean_password(self):
+        """将输入的密码转为密文"""
+        password = self.cleaned_data.get("psw")
+        return md5(password)

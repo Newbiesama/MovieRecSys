@@ -99,7 +99,7 @@ def import_genre(request):
 
 
 def import_movie(request):
-    """导入所有电影信息，设置它们的类型"""
+    """导入所有电影信息，并设置它们的类型"""
     path = os.path.join(BASE, "app01/static/IMDBInfo/info/info.csv")
     try:
         with open(path) as fb:
@@ -158,35 +158,39 @@ def import_movie(request):
 def import_user_rating(request):
     """
     获取ratings文件，设置用户信息和对电影的评分
-    由于用户没有独立的信息，默认用这种方式保存用户User: name=userId,password=userId,email=userId@1.com
-    通过imdb_id对电影进行关联，设置用户对电影的评分,comment默认为空
+    由于用户没有独立的信息，默认用这种方式保存用户User: name=userId, password=userId, email=userId@example.com
+    通过imdb_id对电影进行关联，设置用户对电影的评分，comment默认为空
     """
-    path = os.path.join(BASE, r'static\movie\info\ratings.csv')
-    with open(path) as fb:
-        reader = csv.reader(fb)
-        # userId,movieId,rating,timestamp,timestamp不用管
-        title = reader.__next__()
-        title_dct = dict(zip(title, range(len(title))))
-        # csv文件中，一条记录就是一个用户对一部电影的评分和时间戳，一个用户可能有多条评论
-        # 所以要先取出用户所有的评分，设置成一个字典,格式为{ user:{movie1:rating, movie2:rating, ...}, ...}
-        user_id_dct = dict()
-        for line in reader:
-            user_id = line[title_dct['userId']]
-            imdb_id = line[title_dct['movieId']]
-            rating = line[title_dct['rating']]
-            user_id_dct.setdefault(user_id, dict())
-            user_id_dct[user_id][imdb_id] = rating
-    # 对所有用户和评分记录
-    for user_id, ratings in user_id_dct.items():
-        u = User.objects.create(name=user_id, password=user_id, email=f'{user_id}@1.com')
-        # 必须先保存
-        u.save()
-        # 开始加入评分记录
-        for imdb_id, rating in ratings.items():
-            # Movie_rating(uid=)
-            movie = Movie.objects.get(imdb_id=imdb_id)
-            relation = Movie_rating(user=u, movie=movie, score=rating, comment='')
-            relation.save()
-            # break
-        print(f'{user_id} process success')
-        # break
+    path = os.path.join(BASE, "app01/static/IMDBInfo/info/ratings.csv")
+    try:
+        with open(path) as fb:
+            reader = csv.reader(fb)
+            # userId,movieId,rating,timestamp
+            title = reader.__next__()
+            title_dct = dict(zip(title, range(len(title))))
+            # csv文件中，一条记录就是一个用户对一部电影的评分和时间戳，一个用户可能有多条评论
+            # 所以要先取出用户所有的评分，设置成一个字典,格式为{ user:{movie1:rating, movie2:rating, ...}, ...}
+            user_id_dct = dict()
+            for line in reader:
+                user_id = line[title_dct['userId']]
+                imdb_id = line[title_dct['movieId']]
+                rating = line[title_dct['rating']]
+                user_id_dct.setdefault(user_id, dict())
+                user_id_dct[user_id][imdb_id] = rating
+        # 对所有用户和评分记录
+        for user_id, ratings in user_id_dct.items():
+            u = models.UserInfo.objects.create(name=user_id, psw=user_id, email=f'{user_id}@example.com')
+            # 必须先保存
+            u.save()
+            # 开始加入评分记录
+            for imdb_id, rating in ratings.items():
+                # Movie_rating(uid=)
+                movie = models.Movie.objects.get(imdb_id=imdb_id)
+                relation = models.Movie_rating(user=u, movie=movie, score=rating, comment='')
+                relation.save()
+            print(f'{user_id} process success')
+        return HttpResponse("用户评分导入成功")
+    except FileNotFoundError:
+        return HttpResponse("文件未找到", status=404)
+    except Exception as e:
+        return HttpResponse(f"导入过程中发生错误: {str(e)}", status=500)

@@ -2,58 +2,6 @@ from django.db import models
 from django.db.models import Avg
 
 
-class UserInfo(models.Model):
-    """用户"""
-    name = models.CharField(verbose_name='用户名', max_length=16)
-    psw = models.CharField(verbose_name='密码', max_length=64)
-    phone = models.CharField(verbose_name='手机号', max_length=32)
-    create_time = models.DateField(verbose_name='创建日期')
-
-    def __str__(self):
-        return f"<UserInfo:{self.id}-{self.name}>"
-
-    class Meta:
-        db_table = 'tb_userinfo'
-
-
-class Admin(models.Model):
-    """管理员"""
-    name = models.CharField(verbose_name='管理员名', max_length=16)
-    psw = models.CharField(verbose_name='管理员密码', max_length=64)
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        db_table = 'tb_admin'
-
-
-class Task(models.Model):
-    """任务"""
-    level_choices = (
-        (1, "紧急"),
-        (2, "重要"),
-        (3, "一般"),
-    )
-    level = models.SmallIntegerField(verbose_name="级别", choices=level_choices, default=1)
-    title = models.CharField(verbose_name="标题", max_length=64)
-    detail = models.TextField(verbose_name="详细信息", max_length=128)
-    user = models.ForeignKey(verbose_name="负责人", to="Admin", on_delete=models.CASCADE)
-
-
-class Order(models.Model):
-    """订单"""
-    oid = models.CharField(verbose_name="订单号", max_length=64)
-    title = models.CharField(verbose_name="商品名", max_length=64)
-    price = models.IntegerField(verbose_name="价格")
-    status_choices = (
-        (1, "待支付"),
-        (2, "已支付"),
-    )
-    status = models.SmallIntegerField(verbose_name="状态", choices=status_choices, default=1)
-    admin = models.ForeignKey(verbose_name="管理员", to="Admin", on_delete=models.CASCADE)
-
-
 class Genre(models.Model):
     """电影的类别"""
     name = models.CharField(max_length=100)
@@ -92,7 +40,7 @@ class Movie(models.Model):
         db_table = 'tb_movie'
 
     def __str__(self):
-        return f"<Movie:{self.name},{self.imdb_id}>"
+        return f"{self.name},{self.id}"
 
     def get_score(self):
         # 定义一个获取平均分的方法，模板中直接调用即可
@@ -106,8 +54,8 @@ class Movie(models.Model):
         else:
             return result
 
-    def get_user_score(self, user):
-        return self.movie_rating_set.filter(user=user).values('score')
+    def get_user_score(self, userid):
+        return self.movie_rating_set.filter(user=userid).values('score')
 
     def get_score_int_range(self):
         return range(int(self.get_score()))
@@ -117,15 +65,76 @@ class Movie(models.Model):
         genre_lst = []
         for dct in genre_dct.values():
             genre_lst.append(dct['name'])
-        return genre_lst
+        return ", ".join(genre_lst)
 
     def get_similarity(self, k=5):
         # 获取5部最相似的电影的id
         similarity_movies = self.movie_similarity.all()[:k]
-        print(similarity_movies)
         # movies=Movie.objects.filter(=similarity_movies)
         # print(movies)
         return similarity_movies
+
+
+class UserInfo(models.Model):
+    """用户"""
+    name = models.CharField(verbose_name='用户名', max_length=64)
+    psw = models.CharField(verbose_name='密码', max_length=64)
+    email = models.EmailField(unique=True)
+    rating_movies = models.ManyToManyField(Movie, through="Movie_rating")
+
+    def __str__(self):
+        return f"{self.id},{self.name}"
+
+    class Meta:
+        db_table = 'tb_userinfo'
+
+    def get_rating_movies(self):
+        movie_list = self.rating_movies.all()
+        m_list = []
+        for i in range(5):
+            m_list.append(movie_list[i].name)
+        content = ', '.join(m_list)
+        if len(movie_list) > 5:
+            content = content + " ..."
+        return content
+
+
+class Admin(models.Model):
+    """管理员"""
+    name = models.CharField(verbose_name='管理员名', max_length=16)
+    psw = models.CharField(verbose_name='管理员密码', max_length=64)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        db_table = 'tb_admin'
+
+
+class Task(models.Model):
+    """任务"""
+    level_choices = (
+        (1, "紧急"),
+        (2, "重要"),
+        (3, "一般"),
+    )
+    level = models.SmallIntegerField(verbose_name="级别", choices=level_choices, default=1)
+    title = models.CharField(verbose_name="标题", max_length=64)
+    detail = models.TextField(verbose_name="详细信息", max_length=128)
+    user = models.ForeignKey(verbose_name="负责人", to="Admin", on_delete=models.CASCADE)
+
+
+class Order(models.Model):
+    """订单"""
+    oid = models.CharField(verbose_name="订单号", max_length=64)
+    title = models.CharField(verbose_name="商品名", max_length=64)
+    price = models.IntegerField(verbose_name="价格")
+    status_choices = (
+        (1, "待支付"),
+        (2, "已支付"),
+    )
+    status = models.SmallIntegerField(verbose_name="状态", choices=status_choices, default=1)
+    admin = models.ForeignKey(verbose_name="管理员", to="Admin", on_delete=models.CASCADE)
 
 
 class Movie_similarity(models.Model):

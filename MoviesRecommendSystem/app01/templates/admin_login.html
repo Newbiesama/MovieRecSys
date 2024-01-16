@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %} 登录 {% endblock %}
+
+{% block CSS %}
+    <style>
+        .box01 {
+            width: 500px;
+            min-height: 130px;
+            margin: 150px auto 0 auto;
+            border: 2px solid #dddddd;
+            padding: 0 20px 20px 20px;
+        }
+
+        .box01 h2 {
+            text-align: center;
+        }
+    </style>
+{% endblock %}
+
+
+
+{% block content %}
+
+    <div class="box01">
+        <h2>管理员登录</h2>
+        <form class="form-horizontal" method="post" novalidate>
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username" class="col-sm-3 control-label">管理员名</label>
+                <div class="col-sm-9">
+                    {{ form.name }}
+                    <span style="color: red">{{ form.name.errors.0 }}</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="pwd" class="col-sm-3 control-label">密码</label>
+                <div class="col-sm-9">
+                    {{ form.psw }}
+                    <span style="color: red">{{ form.psw.errors.0 }}</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="submit" class="btn btn-primary">登录</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}

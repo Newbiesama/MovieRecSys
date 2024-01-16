@@ -1,35 +1,10 @@
-from django import forms
 from io import BytesIO
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
 from app01 import models
-from app01.utils.bootstrap import BootStrapForm
-from app01.utils.encrypt import md5
 from app01.utils.checkcode import check_code
-
-
-class LoginForm(BootStrapForm):
-    name = forms.CharField(
-        label="用户名",
-        widget=forms.TextInput,
-        required=True,
-    )
-    psw = forms.CharField(
-        label="密码",
-        widget=forms.PasswordInput(render_value=True),
-        required=True,
-    )
-    code = forms.CharField(
-        label="验证码",
-        widget=forms.TextInput,
-        required=True,
-    )
-
-    def clean_password(self):
-        """将输入的密码转为密文"""
-        password = self.cleaned_data.get("psw")
-        return md5(password)
+from app01.utils.form import LoginForm, AdminLoginForm
 
 
 def login(request):
@@ -40,9 +15,9 @@ def login(request):
     # Post
     form = LoginForm(request.POST)
     if form.is_valid():
-        # 可以获得cleaned_data
-
+        # 可以获得cleaned_data: {'name': 'admin', 'psw': '123', 'code': 'login'}
         # 验证码的校验
+        # 把 code 从 cleaned_data 中 pop 掉，为了直接验证 name 和 psw
         input_code = form.cleaned_data.pop('code')
         session_code = request.session.get('image_code', "")
         if session_code.upper() != input_code.upper():
@@ -55,7 +30,8 @@ def login(request):
         # 错误
         if not obj:
             # 添加错误
-            form.add_error("psw", "用户名或密码错误")
+            form.add_error("name", "用户名或密码错误")
+            print(form.errors)
             return render(request, "login.html", {'form': form})
 
         # 正确
@@ -63,7 +39,8 @@ def login(request):
         request.session["info"] = {'id': obj.id, 'name': obj.name}
         # 重新设置 session 超时时间
         request.session.set_expiry(60 * 60 * 24 * 7)
-        return redirect("/admin/list/")
+        return redirect("/")
+    form.add_error("name", "发生错误")
     return render(request, "login.html", {'form': form})
 
 
@@ -84,3 +61,33 @@ def image_code(request):
     stream = BytesIO()
     img.save(stream, 'png')
     return HttpResponse(stream.getvalue())
+
+
+def admin_login(request):
+    """管理员登录"""
+    if request.method == "GET":
+        form = AdminLoginForm()
+        return render(request, "admin_login.html", {'form': form})
+    # Post
+    form = AdminLoginForm(request.POST)
+    if form.is_valid():
+        # 可以获得cleaned_data: {'name': 'admin', 'psw': '123'}
+        # 与数据库内容匹配，前提 Form 的键与数据库的键一致
+        admin_obj = models.Admin.objects.filter(**form.cleaned_data).first()
+        # 错误
+        if not admin_obj:
+            # 添加错误
+            form.add_error("name", "用户名或密码错误")
+            return render(request, "admin_login.html", {'form': form})
+        # 正确
+        # 网站生成随机字符串；写到用户浏览器的cookie中；再写入到session中；
+        request.session["info"] = {'id': admin_obj.id, 'name': admin_obj.name}
+        # 重新设置 session 超时时间
+        request.session.set_expiry(60 * 60 * 24 * 7)
+        return redirect("/admin/list/")
+    form.add_error("name", "发生错误")
+    return render(request, "admin_login.html", {'form': form})
+
+
+def register(request):
+    return None

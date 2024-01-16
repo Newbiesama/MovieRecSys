@@ -29,8 +29,8 @@
             <tr>
                 <th>ID</th>
                 <th>用户名</th>
-                <th>手机号</th>
-                <th>创建日期</th>
+                <th>邮箱</th>
+                <th>评价的电影</th>
                 <th>操作</th>
             </tr>
             </thead>
@@ -38,9 +38,9 @@
             {% for user in user_list %}
                 <tr>
                     <th scope="row">{{ user.id }}</th>
-                    <td>{{ user.name }}</td>
-                    <td>{{ user.phone }}</td>
-                    <td>{{ user.create_time|date:"Y-m-d"}}</td>
+                    <td class="col-sm-1">{{ user.name }}</td>
+                    <td class="col-sm-2">{{ user.email }}</td>
+                    <td class="col-sm-7">{{ user.get_rating_movies }}</td>
                     <td>
                         <a href="/user/{{ user.id }}/edit" class="btn btn-primary btn-xs">编辑</a>
                         <a href="/user/{{ user.id }}/delete" class="btn btn-danger btn-xs">删除</a>
