@@ -55,3 +55,17 @@ def user_delete(request, nid):
     """删除用户"""
     models.UserInfo.objects.filter(id=nid).delete()
     return redirect("/user/list/")
+
+
+def user_history(request):
+    """获取用户评分历史"""
+    # request.session 是一个字典
+    uid = request.session['info']['id']
+    queryset = models.Movie_rating.objects.filter(user_id=uid)
+    # 实现分页
+    page_object = Pagination(request, queryset)
+    context = {
+        'queryset': page_object.page_queryset,  # 搜素结果进行分页
+        'page_string': page_object.html(),  # 生成页标的 html
+    }
+    return render(request, "user_history.html", context)

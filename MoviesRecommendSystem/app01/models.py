@@ -98,6 +98,11 @@ class UserInfo(models.Model):
             content = content + " ..."
         return content
 
+    def get_all_ratting(self):
+        movie_list = self.rating_movies.all()
+        # id_list = [x.id for x in movie_list]
+        return movie_list
+
 
 class Admin(models.Model):
     """管理员"""
@@ -161,6 +166,9 @@ class Movie_rating(models.Model):
 
     class Meta:
         db_table = 'tb_movie_ratting'
+
+    def __str__(self):
+        return f"{self.user.name}"
 
 
 class Movie_hot(models.Model):
