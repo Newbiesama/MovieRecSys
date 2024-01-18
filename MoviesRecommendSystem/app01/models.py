@@ -168,7 +168,7 @@ class Movie_rating(models.Model):
         db_table = 'tb_movie_ratting'
 
     def __str__(self):
-        return f"{self.user.name}"
+        return f"<Movie_rating: uid:{self.user.id} movie_id:{self.movie.id}>"
 
 
 class Movie_hot(models.Model):

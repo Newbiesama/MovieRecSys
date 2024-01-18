@@ -43,6 +43,7 @@ urlpatterns = [
     # 电影
     path('movie/detail/<int:nid>/', movie.movie_detail),
     path('movie/genre/<int:gid>/', movie.movie_genre),
+    path('movie/rating/', movie.movie_rating),
     # 任务
     path('task/', task.task_t),
     path('task/add/', task.task_add),

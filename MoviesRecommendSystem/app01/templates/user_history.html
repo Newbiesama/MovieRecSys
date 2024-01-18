@@ -36,10 +36,15 @@
 
 {% block content %}
 
+    <div class="container">
+        <div class="alert-success alert" role="alert">评分历史</div>
+    </div>
+
+
     {% for rating in queryset %}
         <div class="container">
             <div class="poster">
-                <a href="#" class="item">
+                <a href="/movie/detail/{{ rating.movie.id }}" class="item">
                     <div class="poster_div">
                         <img src="/static/IMDBInfo/poster/{{ rating.movie.imdb_id }}.jpg" alt="电影封面">
                     </div>

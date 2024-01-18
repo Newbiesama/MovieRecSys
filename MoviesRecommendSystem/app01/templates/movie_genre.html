@@ -15,7 +15,7 @@
             overflow: hidden;
         }
 
-        li {
+        .genre {
             height: 45px;
             width: 115px;
         }
@@ -35,7 +35,7 @@
             <div class="panel-body">
                 <ul class="nav nav-pills">
                     {% for genre in genres %}
-                        <li role="presentation" class="{% if gid == genre.id %} active {% endif %}"
+                        <li role="presentation" class="genre {% if gid == genre.id %} active {% endif %}"
                             style="text-align: center">
                             <a href="/movie/genre/{{ genre.id }}/">{{ genre.name }}</a>
                         </li>
