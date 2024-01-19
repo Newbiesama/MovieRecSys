@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from app01.views import homepage, user, admin, account, task, order, movie
+from app01.views import homepage, user, admin, account, task, order, movie, recommend
 
 urlpatterns = [
     path('', homepage.index),
@@ -44,6 +44,8 @@ urlpatterns = [
     path('movie/detail/<int:nid>/', movie.movie_detail),
     path('movie/genre/<int:gid>/', movie.movie_genre),
     path('movie/rating/', movie.movie_rating),
+    # 推荐
+    path('recommend/', recommend.user_cf),
     # 任务
     path('task/', task.task_t),
     path('task/add/', task.task_add),
