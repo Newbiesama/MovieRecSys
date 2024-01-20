@@ -6,4 +6,5 @@ def user_cf(request):
     uid = request.session['info']['id']
     rec = Recommend_User(uid)
     print(rec.UserCF())
+    print(rec.UserIIF())
     return HttpResponse("ok")
