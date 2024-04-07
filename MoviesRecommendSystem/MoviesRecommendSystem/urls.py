@@ -1,24 +1,13 @@
-"""MoviesRecommendSystem URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/4.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
-from django.contrib import admin
+from django.conf.urls import url
 from django.urls import path
-
+from django.contrib import admin as dadmin
 from app01.views import homepage, user, admin, account, task, order, movie, recommend
+from scheduledTasks.views import testTimedTasks
 
 urlpatterns = [
+    # Django Administration
+    url(r'^admin/', dadmin.site.urls),
+    # 主页
     path('', homepage.index),
     # 账号
     path('login/', account.login),
@@ -44,8 +33,9 @@ urlpatterns = [
     path('movie/detail/<int:nid>/', movie.movie_detail),
     path('movie/genre/<int:gid>/', movie.movie_genre),
     path('movie/rating/', movie.movie_rating),
+    path('movie/rank/', movie.movie_rank),
     # 推荐
-    path('recommend/', recommend.user_cf),
+    path('recommend/', recommend.item_based),
     # 任务
     path('task/', task.task_t),
     path('task/add/', task.task_add),
@@ -55,4 +45,6 @@ urlpatterns = [
     path('order/delete/', order.order_delete),
     path('order/detail/', order.order_detail),
     path('order/edit/', order.order_edit),
+    # 用于定时任务
+    path("test-timed-tasks/", testTimedTasks, name="test-timed-tasks"),
 ]

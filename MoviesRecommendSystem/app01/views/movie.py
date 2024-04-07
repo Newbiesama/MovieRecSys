@@ -69,3 +69,9 @@ def movie_rating(request):
         rating_record = Movie_rating(user_id=uid, movie_id=movie_id, score=rating_score, comment=rating_comment)
         rating_record.save()
     return JsonResponse({"status": True})
+
+
+def movie_rank(request):
+    """电影排行榜"""
+    # 查表
+    return render(request, "movie_rank.html")

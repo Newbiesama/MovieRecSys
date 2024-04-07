@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
-{% block title %}评分历史{% endblock %}
+{% block title %}推荐列表{% endblock %}
+
 {% block CSS %}
     <style>
         .poster {
@@ -10,9 +11,11 @@
         }
 
         .info {
+            max-width: 800px;
             margin-top: 15px;
             float: left;
             word-wrap: break-word;
+            overflow: hidden;
         }
 
         hr {
@@ -26,67 +29,51 @@
             border-width: 1px 0;
             margin: 18px 0;
         }
-
-        .page {
-            display: flex;
-            justify-content: center;
-        }
-
     </style>
 {% endblock %}
 
-{% block content %}
 
+{% block content %}
     <div class="container">
-        <div class="alert-success alert" role="alert">评分历史</div>
+        <div class="alert alert-info" role="alert">这是根据你的评分历史推荐出来的10部电影</div>
     </div>
 
+    {% for movie in queryset %}
 
-    {% for rating in queryset %}
         <div class="container">
             <div class="poster">
-                <a href="/movie/detail/{{ rating.movie.id }}" class="item">
+                <a href="/movie/detail/{{ movie.id }}" class="item">
                     <div class="poster_div">
-                        <img src="/static/IMDBInfo/poster/{{ rating.movie.imdb_id }}.jpg" alt="电影封面">
+                        <img src="/static/IMDBInfo/poster/{{ movie.imdb_id }}.jpg" alt="电影封面">
                     </div>
                 </a>
             </div>
             <div class="info">
                 <p>
                     电影名：
-                    {{ rating.movie.name }}
-                    <span>
-                    {% for foo in rating.movie.get_score_int_range %}
+                    {{ movie.name }}&nbsp;&nbsp;&nbsp;&nbsp;
+                </p>
+                <span>
+                    {% for foo in movie.get_score_int_range %}
                         <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
                     {% endfor %}
                     </span>
-                    <strong style="color:#e09015">{{ rating.movie.get_score }}</strong>
+                <strong style="color:#e09015">{{ movie.get_score }}</strong>
+                <p style="word-wrap: break-word">
+                    简介:
+                    {{ movie.intro }}
                 </p>
                 <p>
-                    我的评分:
-                    <strong style="color:#e09015">{{ rating.score }} </strong>
-                    我的评论:
-                    <strong>{{ rating.comment }}</strong>
+                    类型：
+                    {{ movie.get_genre }}
                 </p>
-                {#                <a href="#">#}
-                <button type="button" class="btn btn-warning">
-                    <span class="glyphicon glyphicon-trash">
-                        删除评论
-                    </span>
-                </button>
-                {#                </a>#}
             </div>
-
         </div>
         <div class="container">
             <hr>
         </div>
     {% endfor %}
 
-    <div class="container page">
-        <ul class="pagination">
-            {{ page_string }}
-        </ul>
-    </div>
+
 
 {% endblock %}
