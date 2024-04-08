@@ -1,12 +1,13 @@
 from django.conf.urls import url
 from django.urls import path
 from django.contrib import admin as dadmin
-from app01.views import homepage, user, admin, account, task, order, movie, recommend
-from scheduledTasks.views import testTimedTasks
+from app01.views import homepage, user, my_admin, account, task, order, movie, recommend
+from scheduledTasks.views import start, stop
+from app01.utils import data_procession
 
 urlpatterns = [
     # Django Administration
-    url(r'^admin/', dadmin.site.urls),
+    # url(r'^admin/', dadmin.site.urls),
     # 主页
     path('', homepage.index),
     # 账号
@@ -21,14 +22,17 @@ urlpatterns = [
     path('user/<int:nid>/edit', user.user_edit),
     path('user/<int:nid>/delete', user.user_delete),
     path('user/history/', user.user_history),
+    path('user/detail/', user.user_detail),
     # 管理员
-    path('admin/list/', admin.admin_list),
-    path('admin/add/', admin.admin_add),
-    path('admin/<int:nid>/edit/', admin.admin_edit),
-    path('admin/<int:nid>/delete/', admin.admin_delete),
+    path('admin/list/', my_admin.admin_list),
+    path('admin/add/', my_admin.admin_add),
+    path('admin/<int:nid>/edit/', my_admin.admin_edit),
+    path('admin/<int:nid>/delete/', my_admin.admin_delete),
+    # 数据处理
     # path('admin/import_g/', admin.import_genre),
     # path('admin/import_m/', admin.import_movie),
     # path('admin/import_u/', admin.import_user_rating),
+    path('cal_rank/', my_admin.cal_rank_url),
     # 电影
     path('movie/detail/<int:nid>/', movie.movie_detail),
     path('movie/genre/<int:gid>/', movie.movie_genre),
@@ -46,5 +50,6 @@ urlpatterns = [
     path('order/detail/', order.order_detail),
     path('order/edit/', order.order_edit),
     # 用于定时任务
-    path("test-timed-tasks/", testTimedTasks, name="test-timed-tasks"),
+    path("task_start/", start),
+    path("task_stop/", stop),
 ]

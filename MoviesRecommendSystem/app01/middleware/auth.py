@@ -4,7 +4,6 @@ from django.utils.deprecation import MiddlewareMixin
 
 class AuthMiddleWare(MiddlewareMixin):
     """登录校验中间件"""
-
     def process_request(self, request):
         # 0.排除那些不需要登录就能访问的页面
         if request.path_info in ['/', '/register/', '/login/', '/index/', '/image/code/', '/admin/login/',

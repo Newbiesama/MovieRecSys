@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% load static %}
+{% block title %} 个人信息 {% endblock %}
+{% block CSS %}
+    .user-avatar {
+        max-width: 150px;
+        border-radius: 50%;
+    }
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <img src="https://via.placeholder.com/150" alt="用户头像" class="user-avatar">
+            </div>
+            <div class="col-md-8">
+                <h2>用户名</h2>
+                <p>个人简介...</p>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <span class="glyphicon glyphicon-heart" aria-hidden="true"></span>
+                        收藏夹
+                        <span class="badge">12</span>
+                    </li>
+                    <li class="list-group-item">
+                        <span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
+                        评论
+                        <span class="badge">32</span>
+                    </li>
+                    <li class="list-group-item">
+                        <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+                        点赞
+                        <span class="badge">64</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}

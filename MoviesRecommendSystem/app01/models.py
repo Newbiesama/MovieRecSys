@@ -35,6 +35,8 @@ class Movie(models.Model):
     actors = models.CharField(max_length=512, blank=True)
     # 电影和电影之间的相似度,A和B的相似度与B和A的相似度是一致的，所以symmetrical设置为True
     movie_similarity = models.ManyToManyField("self", through="Movie_similarity", symmetrical=True)
+    # 喜爱数
+    like_count = models.IntegerField(default=0)
 
     class Meta:
         db_table = 'tb_movie'
@@ -81,6 +83,9 @@ class UserInfo(models.Model):
     psw = models.CharField(verbose_name='密码', max_length=64)
     email = models.EmailField(unique=True)
     rating_movies = models.ManyToManyField(Movie, through="Movie_rating")
+    icon_url = models.CharField(max_length=256)
+    # 上次登录时间
+    login_time = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.id},{self.name}"
@@ -108,6 +113,8 @@ class Admin(models.Model):
     """管理员"""
     name = models.CharField(verbose_name='管理员名', max_length=16)
     psw = models.CharField(verbose_name='管理员密码', max_length=64)
+    # 上次登录时间
+    login_time = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
@@ -143,26 +150,23 @@ class Order(models.Model):
 
 
 class Movie_similarity(models.Model):
-    movie_source = models.ForeignKey(Movie, related_name='movie_source', on_delete=models.CASCADE)
-    movie_target = models.ForeignKey(Movie, related_name='movie_target', on_delete=models.CASCADE)
-    similarity = models.FloatField()
+    """电影相似度表"""
+    movie_id1 = models.ForeignKey(Movie, on_delete=models.CASCADE, unique=False, related_name='similar_movies_1')
+    movie_id2 = models.ForeignKey(Movie, on_delete=models.CASCADE, unique=False, related_name='similar_movies_2')
+    score = models.FloatField(verbose_name="相似度")
 
     class Meta:
-        # 按照相似度降序排序
         db_table = 'tb_movie_similarity'
-        ordering = ['-similarity']
 
 
 class Movie_rating(models.Model):
     """电影评分"""
     # 评分的用户
-    user = models.ForeignKey(UserInfo, on_delete=models.CASCADE, unique=False)
+    user_id = models.ForeignKey(UserInfo, on_delete=models.CASCADE, unique=False)
     # 评分的电影
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, unique=False)
+    movie_id = models.ForeignKey(Movie, on_delete=models.CASCADE, unique=False)
     # 分数
     score = models.FloatField()
-    # 评论，可选
-    comment = models.TextField(blank=True)
 
     class Meta:
         db_table = 'tb_movie_ratting'
@@ -171,13 +175,38 @@ class Movie_rating(models.Model):
         return f"<Movie_rating: uid:{self.user.id} movie_id:{self.movie.id}>"
 
 
-class Movie_hot(models.Model):
-    """存放最热门的一百部电影"""
-    # 电影外键
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
-    # 评分人数
-    rating_number = models.IntegerField()
+class Comment(models.Model):
+    """评论表"""
+    # 评分的用户
+    user = models.ForeignKey(UserInfo, on_delete=models.CASCADE, unique=False)
+    # 评分的电影
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, unique=False)
+    # 分数
+    comment = models.CharField(max_length=256, blank=True)
 
     class Meta:
-        db_table = 'tb_movie_hot'
-        ordering = ['-rating_number']
+        db_table = 'tb_comment'
+
+    def __str__(self):
+        return f"<Comment: uid:{self.user.id} movie_id:{self.movie.id}>"
+
+
+class User_rec(models.Model):
+    """用户推荐表"""
+    # 评分的用户
+    user_id = models.ForeignKey(UserInfo, on_delete=models.CASCADE, unique=False)
+    # 评分的电影
+    movie_id = models.ForeignKey(Movie, on_delete=models.CASCADE, unique=False)
+    score = models.FloatField(verbose_name="相似度")
+
+    class Meta:
+        db_table = 'tb_user_rec'
+
+
+class Movie_ranking(models.Model):
+    """排行榜"""
+    movie_id = models.ForeignKey(Movie, on_delete=models.CASCADE, default=1)
+    rank = models.IntegerField(default=1)
+
+    class Meta:
+        db_table = 'tb_movie_ranking'

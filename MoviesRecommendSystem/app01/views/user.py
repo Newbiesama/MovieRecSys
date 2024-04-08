@@ -69,3 +69,10 @@ def user_history(request):
         'page_string': page_object.html(),  # 生成页标的 html
     }
     return render(request, "user_history.html", context)
+
+
+def user_detail(request):
+    """用户信息页"""
+    uid = request.session['info']['id']
+    # 查表
+    return render(request, "user_detail.html")

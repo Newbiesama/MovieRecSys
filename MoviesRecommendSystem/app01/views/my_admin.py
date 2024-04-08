@@ -8,6 +8,7 @@ from django.shortcuts import render, redirect
 from app01 import models
 from app01.utils.pagination import Pagination
 from app01.utils.form import AdminModelForm
+from app01.utils import data_procession
 
 BASE = os.getcwd()
 
@@ -194,3 +195,9 @@ def import_user_rating(request):
         return HttpResponse("文件未找到", status=404)
     except Exception as e:
         return HttpResponse(f"导入过程中发生错误: {str(e)}", status=500)
+
+
+def cal_rank_url(request):
+    """计算排行榜的路由"""
+    data_procession.cal_rank()
+    return HttpResponse("计算成功")
