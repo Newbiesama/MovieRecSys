@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from app01.models import Movie, Genre, Movie_rating
+from app01.models import Movie, Genre, Movie_rating, Movie_ranking
 from app01.utils.pagination import Pagination
 
 
@@ -74,4 +74,10 @@ def movie_rating(request):
 def movie_rank(request):
     """电影排行榜"""
     # 查表
-    return render(request, "movie_rank.html")
+    queryset = Movie_ranking.objects.all().order_by('-rank_score')[:10]
+    movie_id_list = [Movie.objects.filter(id=x.movie_id_id).first() for x in queryset]
+    obj_dict = dict(enumerate(movie_id_list, start=1))
+    context = {
+        'obj_dict': obj_dict
+    }
+    return render(request, "movie_rank.html", context)

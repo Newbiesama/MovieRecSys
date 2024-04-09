@@ -24,7 +24,7 @@ urlpatterns = [
     path('user/history/', user.user_history),
     path('user/detail/', user.user_detail),
     # 管理员
-    path('admin/list/', my_admin.admin_list),
+    path('myadmin/', my_admin.admin_page),
     path('admin/add/', my_admin.admin_add),
     path('admin/<int:nid>/edit/', my_admin.admin_edit),
     path('admin/<int:nid>/delete/', my_admin.admin_delete),
@@ -39,7 +39,7 @@ urlpatterns = [
     path('movie/rating/', movie.movie_rating),
     path('movie/rank/', movie.movie_rank),
     # 推荐
-    path('recommend/', recommend.item_based),
+    path('recommend_item/', recommend.item_based),
     # 任务
     path('task/', task.task_t),
     path('task/add/', task.task_add),

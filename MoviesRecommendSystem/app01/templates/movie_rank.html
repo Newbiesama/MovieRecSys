@@ -10,34 +10,19 @@
     </style>
 {% endblock %}
 {% block content %}
-     <div class="container">
-    <h1 class="text-center">电影排行榜</h1>
-    <ol class="list-group">
-      <li class="list-group-item clearfix">
-        <img src="https://img9.doubanio.com/view/photo/s_ratio_poster/public/p480747492.webp" alt="肖申克的救赎" class="movie-poster pull-left">
-        <span class="pull-left"><strong>1. 肖申克的救赎</strong></span>
-        <span class="pull-right">9.3分</span>
-      </li>
-      <li class="list-group-item clearfix">
-        <img src="https://img1.doubanio.com/view/photo/s_ratio_poster/public/p510876377.webp" alt="阿甘正传" class="movie-poster pull-left">
-        <span class="pull-left"><strong>2. 阿甘正传</strong></span>
-        <span class="pull-right">9.1分</span>
-      </li>
-      <li class="list-group-item clearfix">
-        <img src="https://img9.doubanio.com/view/photo/s_ratio_poster/public/p457990768.webp" alt="泰坦尼克号" class="movie-poster pull-left">
-        <span class="pull-left"><strong>3. 泰坦尼克号</strong></span>
-        <span class="pull-right">9.0分</span>
-      </li>
-      <li class="list-group-item clearfix">
-        <img src="https://img1.doubanio.com/view/photo/s_ratio_poster/public/p511118051.webp" alt="这个杀手不太冷" class="movie-poster pull-left">
-        <span class="pull-left"><strong>4. 这个杀手不太冷</strong></span>
-        <span class="pull-right">8.9分</span>
-      </li>
-      <li class="list-group-item clearfix">
-        <img src="https://img9.doubanio.com/view/photo/s_ratio_poster/public/p513344864.webp" alt="盗梦空间" class="movie-poster pull-left">
-        <span class="pull-left"><strong>5. 盗梦空间</strong></span>
-        <span class="pull-right">8.8分</span>
-      </li>
-    </ol>
-  </div>
+    <div class="container">
+        <h1 class="text-center">电影排行榜</h1>
+        <ol class="list-group">
+            {% for rank, obj in obj_dict.items %}
+                <a href="/movie/detail/{{ obj.id }}" class="item">
+                    <li class="list-group-item clearfix">
+                        <img src="/static/IMDBInfo/poster/{{ obj.imdb_id }}.jpg" alt="电影封面"
+                             class="movie-poster pull-left">
+                        <span class="pull-left"><strong>{{ obj.name }}</strong></span>
+                        <span class="pull-right">第 {{ rank }} 名</span>
+                    </li>
+                </a>
+            {% endfor %}
+        </ol>
+    </div>
 {% endblock %}

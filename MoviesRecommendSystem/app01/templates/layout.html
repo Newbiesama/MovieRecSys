@@ -30,7 +30,7 @@
                     <a href="/user/list/">用户管理</a>
                 </li>
                 <li>
-                    <a href="/admin/list/">管理员管理</a>
+                    <a href="/myadmin/">管理员管理</a>
                 </li>
                 <li>
                     <a href="/movie/genre/1/">电影分类</a>
@@ -84,6 +84,14 @@
 <script src="{% static 'plugins/bootstrap-3.4.1/js/bootstrap.min.js' %}"></script>
 
 {% block JS %}  {% endblock %}
+
+{% if messages %}
+    <script>
+        {% for msg in messages %}
+            alert('{{ msg.message }}');
+        {% endfor %}
+    </script>
+{% endif %}
 
 </body>
 </html>

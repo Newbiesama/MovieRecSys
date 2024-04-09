@@ -4,6 +4,7 @@ import os
 from django.db import transaction
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from django.contrib import messages
 
 from app01 import models
 from app01.utils.pagination import Pagination
@@ -11,6 +12,17 @@ from app01.utils.form import AdminModelForm
 from app01.utils import data_procession
 
 BASE = os.getcwd()
+
+
+def admin_page(request):
+    """管理员页面"""
+    # 检查用户是否已登录，已登录，继续想下走。未登录，跳转回登录页面。
+    # 用户发来请求，获取cookie随机字符串，拿着随机字符串看看session中有没有。
+    info = request.session.get("info")
+    if not info:
+        return redirect("/login/")
+
+    return render(request, "admin_page.html")
 
 
 def admin_list(request):
@@ -34,7 +46,7 @@ def admin_list(request):
         "page_queryset": page_object.page_queryset,
         "page_string": page_object.html()
     }
-    return render(request, "admin_list.html", context)
+    return render(request, "admin_page.html", context)
 
 
 def admin_add(request):
@@ -199,5 +211,9 @@ def import_user_rating(request):
 
 def cal_rank_url(request):
     """计算排行榜的路由"""
-    data_procession.cal_rank()
-    return HttpResponse("计算成功")
+    if data_procession.cal_rank():
+        messages.success(request, '计算成功')
+        return render(request, "admin_page.html")
+    else:
+        messages.error(request, '发生错误')
+        return render(request, "admin_page.html")

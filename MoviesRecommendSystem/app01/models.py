@@ -169,7 +169,7 @@ class Movie_rating(models.Model):
     score = models.FloatField()
 
     class Meta:
-        db_table = 'tb_movie_ratting'
+        db_table = 'tb_movie_rating'
 
     def __str__(self):
         return f"<Movie_rating: uid:{self.user.id} movie_id:{self.movie.id}>"
@@ -206,7 +206,7 @@ class User_rec(models.Model):
 class Movie_ranking(models.Model):
     """排行榜"""
     movie_id = models.ForeignKey(Movie, on_delete=models.CASCADE, default=1)
-    rank = models.IntegerField(default=1)
+    rank_score = models.FloatField(default=0.0)
 
     class Meta:
         db_table = 'tb_movie_ranking'
