@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from app01.models import Movie, Genre, Movie_rating, Movie_ranking
+from app01.models import Movie, Genre, Movie_rating, Movie_ranking, Movie_similarity, Comment
 from app01.utils.pagination import Pagination
 
 
@@ -20,10 +20,16 @@ def movie_detail(request, nid):
         values = [uid, nid]
         idx_info = dict(zip(keys, values))
         ratting_info = Movie_rating.objects.filter(**idx_info).first()
+        similar_movies = Movie.objects.filter(
+            id__in=Movie_similarity.objects.filter(movie_id1_id=nid).values_list('movie_id2_id', flat=True
+                                                                            ))
+        comments = Comment.objects.filter(movie_id=nid)
         # 电影对象与评分对象
         context = {
             'rating_info': ratting_info,
-            "movie": obj
+            "movie": obj,
+            'similar_movies': similar_movies,
+            'comments': comments
         }
         return render(request, "movie_detail.html", context)
     else:

@@ -1,17 +1,16 @@
 {% extends "layout.html" %}
 {% load static %}
 {% block title %} 个人信息 {% endblock %}
-{% block CSS %}
-    .user-avatar {
-        max-width: 150px;
-        border-radius: 50%;
-    }
-{% endblock %}
+{% block CSS %}{% endblock %}
+
 {% block content %}
     <div class="container">
         <div class="row">
             <div class="col-md-4">
-                <img src="https://via.placeholder.com/150" alt="用户头像" class="user-avatar">
+                {% with icon_path='icons/'|add:nav_info.icon %}
+                    <img src="{% static icon_path %}" alt="用户头像" class="user-avatar" style="max-width: 150px;
+        border-radius: 50%; border: black; ">
+                {% endwith %}
             </div>
             <div class="col-md-8">
                 <h2>用户名</h2>

@@ -1,8 +1,10 @@
+import os
 from io import BytesIO
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
 from app01 import models
+from app01.utils import gen_icon
 from app01.utils.checkcode import check_code
 from app01.utils.form import LoginForm, AdminLoginForm, UserModelForm
 
@@ -96,7 +98,14 @@ def register(request):
     form = UserModelForm(request.POST)
     if form.is_valid():
         form.save()
+        # 获取该对象
         obj = models.UserInfo.objects.filter(**form.cleaned_data).first()
+        # 生成头像
+        fn = f"icon_{str(obj.id)}.png"
+        if gen_icon.gen_icon(obj.id):
+            models.UserInfo.objects.filter(id=obj.id).update(icon_url=fn)
+        else:
+            models.UserInfo.objects.filter(id=obj.id).update(icon_url='../static/img/avatar.png')
         # 直接登录
         request.session["info"] = {'id': obj.id, 'name': obj.name}
         request.session.set_expiry(60 * 60 * 24 * 7)

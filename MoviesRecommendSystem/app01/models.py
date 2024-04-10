@@ -84,8 +84,10 @@ class UserInfo(models.Model):
     email = models.EmailField(unique=True)
     rating_movies = models.ManyToManyField(Movie, through="Movie_rating")
     icon_url = models.CharField(max_length=256)
+    # 注册时间
+    register_time = models.DateTimeField(auto_now_add=True)
     # 上次登录时间
-    login_time = models.DateTimeField(auto_now_add=True)
+    login_time = models.DateTimeField(blank=True, auto_now=True)
 
     def __str__(self):
         return f"{self.id},{self.name}"
@@ -179,10 +181,14 @@ class Comment(models.Model):
     """评论表"""
     # 评分的用户
     user = models.ForeignKey(UserInfo, on_delete=models.CASCADE, unique=False)
+    # 用户名
+    username = models.CharField(default='-', max_length=64)
     # 评分的电影
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, unique=False)
-    # 分数
+    # 内容
     comment = models.CharField(max_length=256, blank=True)
+    # 时间
+    time = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = 'tb_comment'
