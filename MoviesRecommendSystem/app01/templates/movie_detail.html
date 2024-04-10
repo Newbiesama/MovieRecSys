@@ -72,28 +72,7 @@
         </div>
     </div>
 
-    {#    <div class="container similarity_movie">#}
-    {#        <br>#}
-    {#        <div class="alert alert-warning" role="alert">喜欢这部电影的人也喜欢...</div>#}
-    {##}
-    {#        {% for movie in similarity_movies %}#}
-    {#            <div class="smovie" {% if forloop.first %} style="margin-left: -6px" {% endif %}>#}
-    {#                <a href="{% url 'movie:detail' movie.pk %}" class="item">#}
-    {#                    <div class="poster_div">#}
-    {#                        <img src="/static/movie/poster/{{ movie.imdb_id }}.jpg" alt="">#}
-    {#                        <p>{{ movie.name }}#}
-    {#                            <strong style="color:#e09015">{{ movie.get_score }}</strong>#}
-    {#                        </p>#}
-    {#                    </div>#}
-    {#                </a>#}
-    {#            </div>#}
-    {##}
-    {#        {% endfor %}#}
-    {##}
-    {#    </div>#}
-
-    <div class="container">
-        <hr>
+    <div class="container similarity_movies" style="margin-top: 30px">
         {# 利用js动态生成，依赖这个form #}
         <form id="formRating" class="star" method="post">
             {# 评分组件 #}
@@ -110,6 +89,56 @@
             </div>
         </form>
     </div>
+
+    <div class="container" style="margin-top: 25px">
+        <div class="alert alert-warning" role="alert">喜欢这部电影的人也喜欢：</div>
+        <div>
+            {% for movie in similar_movies %}
+                <div class="smovie" {% if forloop.first %} style="margin-left: -6px" {% endif %}>
+                    <a href="/movie/detail/{{ movie.id }}" class="item">
+                        <div class="poster_div">
+                            <img src="/static/IMDBInfo/poster/{{ movie.imdb_id }}.jpg" alt="电影封面"
+                                 style="width: 80%; height: 80%;">
+                            <p>{{ movie.name }}
+                                <strong style="color:#e09015">{{ movie.get_score }}</strong>
+                            </p>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="container">
+        <span style="font-size: 20px; font-weight: 500">评论</span>
+        &nbsp;
+        <span style="font-size: 13px; font-weight: 400">{{ comments|length }}</span>
+        <div class="panel-body">
+            <ul class="media-list">
+                {% if comments %}
+                    {% for com in comments %}
+                        <li class="media">
+                            <div class="media-left">
+                                <a href="#">
+                                    <img class="media-object" src="https://via.placeholder.com/64x64" alt="...">
+                                </a>
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading">{{ com.username }} {{ com.time }}</h4>
+                                {{ com.comment }}
+                            </div>
+                        </li>
+                        <hr>
+                    {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="text-center">
+                        <span style="color: #7c7c7c">没有更多评论</span>
+                    </div>
+                {% endif %}
+        </div>
+    </div>
+
+
 
 {% endblock %}
 

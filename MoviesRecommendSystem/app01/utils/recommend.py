@@ -141,6 +141,7 @@ class Recommend_Item(object):
     def build_user_movie():
         """构建user_item表"""
         # 格式: {uid: <QuerySet [...]>, ...}
+        # key 是用户 id，value 是该用户评分过的电影 id
         temp = dict()
         user_id_qs = UserInfo.objects.all().values_list("id", flat=True)
         for uid in user_id_qs:
@@ -173,8 +174,8 @@ class Recommend_Item(object):
             for v in sim[m]:
                 sim[m][v] /= math.sqrt(num[m] * num[v])
         # 按照相似度排序
-        sorted_item_sim = {k: list(sorted(v.items(), key=lambda x: -x[1])[:self.K]) for k, v in sim.items()}
-        return sorted_item_sim[:10]
+        sorted_item_sim = {k: list(sorted(v.items(), key=lambda x: -x[1])[:5]) for k, v in sim.items()}
+        return sorted_item_sim
 
     @timer
     def ItemIUF(self):
@@ -202,14 +203,15 @@ class Recommend_Item(object):
             for v in sim[m]:
                 sim[m][v] /= math.sqrt(num[m] * num[v])
         # 按照相似度排序
-        # sorted_item_sim = {k: list(sorted(v.items(), key=lambda x: -x[1])[:self.K]) for k, v in sim.items()}
-        return sim[133]
+        sorted_item_sim = {k: list(sorted(v.items(), key=lambda x: -x[1])[:5]) for k, v in sim.items()}
+        return sorted_item_sim
 
     @timer
     def ItemCF_Norm(self):
         """基于归一化的物品余弦相似度的推荐"""
-        # 计算物品相似度矩阵
+        # 计算物品之间的相似度需要知道各自评分的人数，和共同为之评分的人数
         sim = {}
+        # num 用来统计每部电影被多少人评了分
         num = {}
         for user in self.user_movie:
             movies = self.user_movie[user]
@@ -218,6 +220,7 @@ class Recommend_Item(object):
                 if m not in num:
                     num[m] = 0
                 num[m] += 1
+
                 if m not in sim:
                     sim[m] = {}
                 for j in range(len(movies)):
@@ -240,5 +243,5 @@ class Recommend_Item(object):
                 for v in sim[u]:
                     sim[u][v] /= s
         # 按照相似度排序
-        sorted_item_sim = {k: list(sorted(v.items(), key=lambda x: -x[1])[:self.K]) for k, v in sim.items()}
+        sorted_item_sim = {k: list(sorted(v.items(), key=lambda x: -x[1])[:5]) for k, v in sim.items()}
         return sorted_item_sim

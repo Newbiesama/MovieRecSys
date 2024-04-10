@@ -43,6 +43,4 @@ def cal_rank():
         models.Movie_ranking.objects.bulk_create(rank_to_create)
         return True
     except Exception as e:
-        # 发生异常时进行处理
-        # 可以记录日志、回滚事务等操作
         raise Exception("计算排行榜时发生异常: " + str(e))

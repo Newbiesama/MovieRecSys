@@ -39,6 +39,7 @@ urlpatterns = [
     path('movie/rating/', movie.movie_rating),
     path('movie/rank/', movie.movie_rank),
     # 推荐
+    path('recommend_user/', recommend.user_based),
     path('recommend_item/', recommend.item_based),
     # 任务
     path('task/', task.task_t),
