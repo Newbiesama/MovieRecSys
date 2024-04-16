@@ -5,24 +5,79 @@ from django.db import transaction
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.utils import timezone
 
 from app01 import models
 from app01.utils.pagination import Pagination
-from app01.utils.form import AdminModelForm
-from app01.utils import data_procession
+from app01.utils.form import AdminModelForm, LoginForm
+from app01.utils import data_procession, gen_icon
+from django.http import JsonResponse
+from apscheduler.schedulers.base import BaseScheduler
 
 BASE = os.getcwd()
 
 
+def admin_login(request):
+    """ 登录页 """
+    if request.method == "GET":
+        form = LoginForm()
+        return render(request, "admin_login.html", {'form': form})
+    # Post
+    form = LoginForm(request.POST)
+    if form.is_valid():
+        # 可以获得cleaned_data: {'name': 'admin', 'psw': '123', 'code': 'login'}
+        # 验证码的校验
+        # 把 code 从 cleaned_data 中 pop 掉，为了直接验证 name 和 psw
+        input_code = form.cleaned_data.pop('code')
+        session_code = request.session.get('image_code', "")
+        if session_code.upper() != input_code.upper():
+            form.add_error("code", "验证码错误")
+            return render(request, "login.html", {'form': form})
+        models.Admin.objects.filter(**form.cleaned_data).update(login_time=timezone.now())
+        # 与数据库内容匹配，前提 Form 的键与数据库的键一致
+        obj = models.Admin.objects.filter(**form.cleaned_data).first()
+        # 错误
+        if not obj:
+            # 添加错误
+            form.add_error("name", "用户名或密码错误")
+            return render(request, "admin_login.html", {'form': form})
+
+        # 正确
+        # 网站生成随机字符串；写到用户浏览器的cookie中；再写入到session中；
+        request.session["info"] = {'id': obj.id, 'name': obj.name, 'type': str(1)}
+        # 重新设置 session 超时时间
+        request.session.set_expiry(60 * 60 * 24 * 7)
+        return redirect("/")
+    form.add_error("name", "发生错误")
+    return render(request, "admin_login.html", {'form': form})
+
+
 def admin_page(request):
     """管理员页面"""
-    # 检查用户是否已登录，已登录，继续想下走。未登录，跳转回登录页面。
-    # 用户发来请求，获取cookie随机字符串，拿着随机字符串看看session中有没有。
-    info = request.session.get("info")
-    if not info:
-        return redirect("/login/")
-
-    return render(request, "admin_page.html")
+    info_dict = request.session.get('info')
+    if not info_dict or info_dict['type'] is '0':
+        return redirect("/myadmin/login/")
+    from scheduledTasks.views import scheduler
+    # print(scheduler.get_jobs())
+    scheduler.print_jobs()
+    # print(scheduler.running)
+    jobs = scheduler.get_jobs()  # 获取所有任务
+    job_list = []
+    for job in jobs:
+        next_time = 'null'
+        if not job.pending:
+            next_time = str(job.next_run_time)
+        job_info = {
+            'id': job.id,
+            'trigger': job.trigger,
+            'state': job.pending,
+            'next_run_time': next_time
+        }
+        job_list.append(job_info)
+    content = {
+        'job_info': job_list
+    }
+    return render(request, "admin_page.html", content)
 
 
 def admin_list(request):
@@ -209,10 +264,21 @@ def import_user_rating(request):
         return HttpResponse(f"导入过程中发生错误: {str(e)}", status=500)
 
 
-def cal_rank_url(request):
+def cal_rank_url(request, silent=False):
     """计算排行榜的路由"""
     if data_procession.cal_rank():
-        messages.success(request, '计算成功')
+        if not silent:
+            messages.success(request, '计算成功')
+        return render(request, "admin_page.html")
+    else:
+        if not silent:
+            messages.error(request, '发生错误')
+        return render(request, "admin_page.html")
+
+
+def admin_set_icons(request):
+    if gen_icon.set_icons():
+        messages.success(request, '设置成功')
         return render(request, "admin_page.html")
     else:
         messages.error(request, '发生错误')

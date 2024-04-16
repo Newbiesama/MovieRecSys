@@ -61,12 +61,16 @@ def user_history(request):
     """获取用户评分历史"""
     # request.session 是一个字典
     uid = request.session['info']['id']
-    queryset = models.Movie_rating.objects.filter(user_id=uid)
+    temp = models.Movie_rating.objects.filter(user_id=uid)
+    score_dict = {x.movie_id_id: x.score for x in temp}
+    queryset_id = models.Movie_rating.objects.filter(user_id=uid).values_list('movie_id', flat=True)
+    queryset = models.Movie.objects.filter(id__in=queryset_id)
     # 实现分页
     page_object = Pagination(request, queryset)
     context = {
         'queryset': page_object.page_queryset,  # 搜素结果进行分页
         'page_string': page_object.html(),  # 生成页标的 html
+        'score_dict': score_dict
     }
     return render(request, "user_history.html", context)
 
@@ -74,5 +78,13 @@ def user_history(request):
 def user_detail(request):
     """用户信息页"""
     uid = request.session['info']['id']
+    tt = models.UserInfo.objects.filter(id=uid).first()
+    m_cnt = models.Movie_rating.objects.filter(user_id=uid).count()
+    c_cnt = models.Comment.objects.filter(user_id=uid).count()
+    context = {
+        'user': tt,
+        'm_cnt': m_cnt,
+        'c_cnt': c_cnt
+    }
     # 查表
-    return render(request, "user_detail.html")
+    return render(request, "user_detail.html", context)

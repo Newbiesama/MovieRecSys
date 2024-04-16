@@ -1,8 +1,12 @@
+import os
+
+from django.contrib import messages
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from app01.models import Movie, Genre, Movie_rating, Movie_ranking, Movie_similarity, Comment
+from app01.utils.form import MovieModelForm
 from app01.utils.pagination import Pagination
 
 
@@ -22,7 +26,7 @@ def movie_detail(request, nid):
         ratting_info = Movie_rating.objects.filter(**idx_info).first()
         similar_movies = Movie.objects.filter(
             id__in=Movie_similarity.objects.filter(movie_id1_id=nid).values_list('movie_id2_id', flat=True
-                                                                            ))
+                                                                                 ))
         comments = Comment.objects.filter(movie_id=nid)
         # 电影对象与评分对象
         context = {
@@ -87,3 +91,34 @@ def movie_rank(request):
         'obj_dict': obj_dict
     }
     return render(request, "movie_rank.html", context)
+
+
+def movie_add(request):
+    if request.method == "GET":
+        form = MovieModelForm()  # 生成实例
+        return render(request, "movie_add.html", {"form": form})
+    # POST
+    form = MovieModelForm(data=request.POST)
+    if form.is_valid():
+        form.save()
+        return redirect("/myadmin/")
+    else:
+        return render(request, "movie_add.html", {"form": form})
+
+
+def cover_upload(request):
+    if request.method == "GET":
+        return render(request, "cover_upload.html")
+    imdb_id = request.POST.get("imdb_id")
+    file = request.FILES.get("image")
+    static_url = '/Volumes/HY/PythonProjects/MoviesRecommendSystem/MoviesRecommendSystem/app01/static'
+    fn = os.path.join(static_url, 'IMDBInfo/poster', f"{imdb_id}.png")
+    if file and imdb_id:
+        # 保存文件到目标文件夹
+        with open(fn, 'wb+') as destination:  # 替换为实际的目标文件夹路径和文件名
+            for chunk in file.chunks():
+                destination.write(chunk)
+        messages.success(request, "上传成功")
+    else:
+        messages.error(request, "没有选择图片或id")
+    return redirect("/myadmin/")

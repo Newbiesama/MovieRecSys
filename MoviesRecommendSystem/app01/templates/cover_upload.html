@@ -1,10 +1,55 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "layout.html" %}
+{% load static %}
+
+{% block CSS %}
+    <link rel="stylesheet" href="{% static "/plugins/bootstrap-datepicker-1.9.0/css/bootstrap-datepicker.min.css" %}">
+    <style>
+        .form-group2 {
+            margin-bottom: 30px;
+        }
+
+        .form-group2 input {
+            margin-top: 40px;
+        }
+
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h2>封面上传</h2>
+        <form action="/cover/upload/" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group2">
+                <input type="file" name="image" id="imageInput">
+                <br>
+                <img id="previewImage" src="#" alt="预览图片" style="max-width: 182px; max-height: 268px; display: none">
+                <input type="text" name="imdb_id" id="id" placeholder="请输入IMDb ID">
+            </div>
+            <button type="submit" class="btn btn-primary">上传</button>
+        </form>
+    </div>
+
+{% endblock %}
+
+{% block JS %}
+    <script>
+        const imageInput = document.getElementById('imageInput');
+        const previewImage = document.getElementById('previewImage');
+
+        imageInput.addEventListener('change', function (event) {
+            const file = event.target.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+
+                reader.addEventListener('load', function (event) {
+                    previewImage.src = event.target.result;
+                    previewImage.style.display = 'block'; // 显示图像
+                });
+
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+{% endblock %}

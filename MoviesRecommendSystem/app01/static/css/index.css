@@ -1,0 +1,212 @@
+.banner .slides li {
+    opacity: 0;
+    transition: all 0.75s;
+}
+
+.banner .slides li:nth-child(1) {
+    opacity: 1;
+}
+
+.banner .dotbutton {
+    position: absolute;
+    bottom: 10px;
+    left: 45%;
+}
+
+.banner .dotbutton ul {
+    list-style: none;
+}
+
+.banner .dotbutton ul li {
+    width: 15px;
+    height: 6px;
+    border-radius: 2px;
+    background-color: #bbb;
+    float: left;
+    margin-right: 10px;
+    transition: all ease-in-out 0.5s;
+}
+
+.banner .dotbutton ul li:hover {
+    background-color: #fff !important;
+    cursor: pointer;
+    width: 30px !important;
+}
+
+.banner .dotbutton ul li:nth-child(1) {
+    background-color: #eee;
+    width: 25px;
+}
+
+.sec1 .pig {
+    position: relative;
+}
+
+.sec1 .pig .menu {
+    margin: 25px 0 0px;
+    height: 65px;
+    overflow: hidden;
+}
+
+.sec1 .pig .menu .left {
+    display: block;
+}
+
+.sec1 .pig .menu .left h4 {
+    font-size: 20px;
+    font-weight: 400;
+    float: left;
+    height: 60px;
+    line-height: 60px;
+    margin-right: 10px;
+    margin-left: 0px;
+}
+
+.sec1 .pig .menu .left .h42 {
+    border-left: 1px #aaa solid;
+    padding-left: 20px;
+}
+
+.sec1 .pig .menu .left ul {
+    float: left;
+}
+
+.sec1 .pig .menu .left ul.first {
+    display: block;
+    width: 330px;
+}
+
+.sec1 .pig .menu .left ul.first li {
+    cursor: no-drop;
+}
+
+.sec1 .pig .menu .left ul.first li:nth-child(1) {
+    cursor: pointer;
+    background-color: #fff;
+}
+
+.sec1 .pig .menu .left ul.first li:nth-child(1) a {
+    color: #000;
+}
+
+.sec1 .pig .menu .left ul.next li:nth-child(1) {
+    cursor: pointer;
+    background-color: #fff;
+}
+
+.sec1 .pig .menu .left ul.next li:nth-child(1) a {
+    color: #000;
+}
+
+.sec1 .pig .menu .left ul.next {
+    display: block;
+    width: 120px;
+}
+
+.sec1 .pig .menu .left ul li {
+    float: left;
+    margin-right: 15px;
+    height: 20px;
+    border: 1px #fff solid;
+    text-align: center;
+    padding: 1px 5px 3px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.sec1 .pig .menu .left ul.next li {
+    width: 30px;
+    cursor: no-drop;
+}
+
+.sec1 .pig .menu .left ul li a {
+    font-size: 14px;
+    color: #fff;
+    width: 30px;
+    height: 20px;
+}
+
+.sec1 .pig .menu .right {
+    display: block;
+    float: right;
+}
+
+.sec1 .pig .menu .right .search {
+    float: left;
+    margin: 15px 30px;
+    width: 30px;
+    /* font-size: 10px; */
+    height: 30px;
+    line-height: 30px;
+    border: 2px solid #fff;
+    border-radius: 15px;
+    text-align: center;
+    transition: width 0.3s ease-in-out;
+}
+
+.sec1 .pig .menu .right .search button {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    float: right;
+    margin: auto 0px;
+    border: none;
+    cursor: pointer;
+}
+
+.sec1 .pig .menu .right .search button img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
+.sec1 .pig .menu .right .search input {
+    display: none;
+    border: none;
+    margin: 2px auto;
+    width: 108px;
+    /* float: left; */
+    float: right;
+    height: 25px;
+    line-height: 25px;
+    font-size: 15px;
+    background-color: #000;
+    color: #fff;
+    /* margin-right: -15px; */
+}
+
+.sec1 .pig .menu .right select {
+    margin-top: 10px;
+    width: 100px;
+    font-size: 18px;
+    height: 40px;
+    border: 2px solid #fff;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.page {
+    display: flex;
+    justify-content: center;
+    margin: 20px auto 0;
+}
+
+.page ul {
+    text-align: center;
+}
+
+.page ul li {
+    /*border: 2px solid #fff;*/
+    /*width: 30px;*/
+    height: 30px;
+    line-height: 30px;
+    border-radius: 5px;
+    margin: 5px 5px 0px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+}
+
+
+

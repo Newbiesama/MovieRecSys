@@ -1,7 +1,10 @@
 import os.path
 
+from django.contrib import messages
 from identicons import generate
 from identicons import save
+
+from app01 import models
 
 
 def gen_icon(text):
@@ -16,5 +19,21 @@ def gen_icon(text):
         return e
 
 
-if __name__ == '__main__':
-    gen_icon("dfs")
+def set_icons(*uid):
+    try:
+        if not uid:
+            q_set = models.UserInfo.objects.all().values_list('id')
+            for uid in q_set:
+                uid = uid[0]
+                gen_icon(uid)
+                fn = f"icon_{uid}.png"
+                models.UserInfo.objects.filter(id=uid).update(icon_url=fn)
+        else:
+            for uid in uid:
+                gen_icon(uid)
+                fn = f"icon_{uid}.png"
+                models.UserInfo.objects.filter(id=uid).update(icon_url=fn)
+        return True
+    except Exception as e:
+        print(e)
+        return False

@@ -17,7 +17,7 @@ class Recommend_User(object):
         # 寻找相似用户的个数
         self.K = 20
         # 推荐电影数量
-        self.N = 10
+        self.N = 20
         # 存放当前用户评分过的电影querySet
         self.user_rated_movies = None
         # item-user倒排表

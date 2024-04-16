@@ -2,6 +2,7 @@ import os
 from io import BytesIO
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from django.utils import timezone
 
 from app01 import models
 from app01.utils import gen_icon
@@ -25,10 +26,9 @@ def login(request):
         if session_code.upper() != input_code.upper():
             form.add_error("code", "验证码错误")
             return render(request, "login.html", {'form': form})
-
+        models.UserInfo.objects.filter(**form.cleaned_data).update(login_time=timezone.now())
         # 与数据库内容匹配，前提 Form 的键与数据库的键一致
         obj = models.UserInfo.objects.filter(**form.cleaned_data).first()
-
         # 错误
         if not obj:
             # 添加错误
@@ -37,7 +37,7 @@ def login(request):
 
         # 正确
         # 网站生成随机字符串；写到用户浏览器的cookie中；再写入到session中；
-        request.session["info"] = {'id': obj.id, 'name': obj.name}
+        request.session["info"] = {'id': obj.id, 'name': obj.name, 'type': str(0)}
         # 重新设置 session 超时时间
         request.session.set_expiry(60 * 60 * 24 * 7)
         return redirect("/")
@@ -82,7 +82,7 @@ def admin_login(request):
             return render(request, "admin_login.html", {'form': form})
         # 正确
         # 网站生成随机字符串；写到用户浏览器的cookie中；再写入到session中；
-        request.session["info"] = {'id': admin_obj.id, 'name': admin_obj.name}
+        request.session["info"] = {'id': admin_obj.id, 'name': admin_obj.name, 'type': str(1)}
         # 重新设置 session 超时时间
         request.session.set_expiry(60 * 60 * 24 * 7)
         return redirect("/admin/list/")

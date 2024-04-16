@@ -16,23 +16,23 @@ class Genre(models.Model):
 class Movie(models.Model):
     """电影的相关信息"""
     # 电影名
-    name = models.CharField(max_length=256)
+    name = models.CharField(verbose_name='电影名', max_length=256)
     # imdb_id是info文件里面的电影顺序
     imdb_id = models.IntegerField()
     # 时长
-    duration = models.CharField(max_length=256, blank=True)
+    duration = models.CharField(verbose_name='时长', max_length=256, blank=True)
     # 类型
-    genre = models.ManyToManyField(Genre)
+    genre = models.ManyToManyField(Genre, verbose_name='电影类型')
     # 发行时间
-    release_time = models.CharField(max_length=256, blank=True)
+    release_time = models.CharField(verbose_name='发行时间', max_length=256, blank=True)
     # 简介
-    intro = models.TextField(blank=True)
+    intro = models.TextField(verbose_name='简介', blank=True)
     # 导演
-    director = models.CharField(max_length=256, blank=True)
+    director = models.CharField(verbose_name='导演', max_length=256, blank=True)
     # 编剧
-    writers = models.CharField(max_length=256, blank=True)
+    writers = models.CharField(verbose_name='编剧', max_length=256, blank=True)
     # 演员
-    actors = models.CharField(max_length=512, blank=True)
+    actors = models.CharField(verbose_name='演员', max_length=512, blank=True)
     # 电影和电影之间的相似度,A和B的相似度与B和A的相似度是一致的，所以symmetrical设置为True
     movie_similarity = models.ManyToManyField("self", through="Movie_similarity", symmetrical=True)
     # 喜爱数
@@ -174,7 +174,7 @@ class Movie_rating(models.Model):
         db_table = 'tb_movie_rating'
 
     def __str__(self):
-        return f"<Movie_rating: uid:{self.user.id} movie_id:{self.movie.id}>"
+        return f"<Movie_rating: uid:{self.user_id} movie_id:{self.movie_id}>"
 
 
 class Comment(models.Model):

@@ -1,6 +1,40 @@
 {% extends "layout.html" %}
-
+{% load static %}
 {% block title %} 管理员页面 {% endblock %}
+
+{% block CSS %}
+    <style>
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            position: relative;
+        }
+
+        .status {
+            width: 17px;
+            height: 17px;
+            border: 1px solid rgb(48, 69, 96);
+            border-radius: 50%;
+            position: absolute;
+            right: 25px;
+            top: 10px;
+            transform: translate(40%, -40%);
+            background-color: rgb(220, 220, 220);
+            display: block;
+        }
+
+        .active {
+            background-color: rgb(48, 249, 75);
+        }
+
+        .st {
+            position: absolute;
+            right: -25px;
+            top: 2px;
+        }
+    </style>
+{% endblock %}
 
 {% block content %}
 
@@ -20,6 +54,7 @@
                 <td class="col-sm-7">用户管理</td>
                 <td>
                     <a href="/user/list/" class="btn btn-primary btn-sm">查看用户列表</a>
+                    <a href="/admin/set_icon/" class="btn btn-primary btn-sm">设置头像</a>
                 </td>
             </tr>
             <tr>
@@ -27,10 +62,12 @@
                 <td>
                     <a href="/cal_rank/" class="btn btn-primary btn-sm">计算排行榜</a>
                 </td>
-            </tr><tr>
+            </tr>
+            <tr>
                 <td class="col-sm-7">电影管理</td>
                 <td>
-                    <a href="" class="btn btn-primary btn-sm">导入电影</a>
+                    <a href="/movie/add/" class="btn btn-primary btn-sm">导入电影</a>
+                    <a href="/cover/upload/" class="btn btn-primary btn-sm">上传电影封面</a>
                     <a href="/recommend_item/" class="btn btn-primary btn-sm">计算电影相似度</a>
                 </td>
             </tr>
@@ -49,29 +86,38 @@
             <thead>
             <tr>
                 <th>任务名称</th>
-                <th>时间间隔</th>
+                <th>执行计划</th>
                 <th>任务状态</th>
-                <th>起始时间</th>
+                <th>下次运行时间</th>
                 <th>操作</th>
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <td class="col-sm-3">用户管理</td>
-                <td class="col-sm-3">用户管理</td>
-                <td class="col-sm-3">用户管理</td>
-                <td class="col-sm-3">用户管理</td>
-                <td>
-                    <a href="/user/list/" class="btn btn-primary btn-sm">查看用户列表</a>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-sm-3">排行榜管理</td>
-                <td>
-                    <a href="/cal_rank/" class="btn btn-primary btn-sm">计算排行榜</a>
-                </td>
-            </tr>
+            {% for job in job_info %}
+                <tr>
+                    <td class="col-sm-2">{{ job.id }}</td>
+                    <td class="col-sm-2">{{ job.trigger }}</td>
+                    <td class="col-sm-2">
+                        <div class="avatar">
+                            <span class="status {% if not job.state %}active{% endif %}"></span>
+                            <span class="st">{% if not job.state %}运行中{% else %}已停止{% endif %}</span>
+                        </div>
+                    </td>
+                    <td class="col-sm-2">{{ job.next_run_time }}</td>
+
+                    <td>
+                        <a href="" class="btn btn-primary btn-sm">开始任务</a>
+                        <a href="" class="btn btn-primary btn-sm">暂停任务</a>
+                        <a href="" class="btn btn-primary btn-sm">删除任务</a>
+                    </td>
+                </tr>
+            {% endfor %}
             </tbody>
+            <a href="/task_start/" class="btn btn-primary btn-sm" style="margin-right: 10px">启动调度器</a>
+            <a href="/task_init/" class="btn btn-primary btn-sm" style="margin-right: 10px">初始化任务</a>
+            <a href="/task_delete_all/" class="btn btn-primary btn-sm" style="margin-right: 10px">删除所有任务</a>
+            <a href="/task_pause_all/" class="btn btn-primary btn-sm" style="margin-right: 10px">暂停所有任务</a>
+            <a href="/task_resume_all/" class="btn btn-primary btn-sm" style="margin-right: 10px">继续所有任务</a>
         </table>
     </div>
 {% endblock %}

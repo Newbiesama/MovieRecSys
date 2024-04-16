@@ -1,10 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "layout.html" %}
+{% load static %}
+{% block title %} 首页 {% endblock %}
+{% block CSS %}
+    <style>
+        .item {
+            display: block;
+            float: left;
+            font-size: 15px;
+            text-align: center;
+            width: 200px;
+            margin: 0 25px 10px 0;
+        }
+
+        .item .poster_div {
+            height: 340px;
+            overflow: hidden;
+        }
+
+        .page {
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
+{% endblock %}
+{% block content %}
+
+    <div class="container" style="margin-top: 25px;">
+        <div class="alert alert-warning" role="alert" style="font-size: 18px">搜索结果</div>
+    </div>
+    {% if queryset %}
+        <div class="container" style="margin-top: 40px">
+            {% for movie in queryset %}
+                <a href="/movie/detail/{{ movie.id }}" class="item">
+                    <div class="poster_div">
+                        <img src="/static/IMDBInfo/poster/{{ movie.imdb_id }}.jpg" alt="电影封面">
+                        <p>{{ movie.name }}
+                            <strong style="color:#e09015">{{ movie.get_score }}</strong>
+                        </p>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center">
+            <span style="">没有相关内容</span>
+        </div>
+    {% endif %}
+
+    <div class="container page">
+        <ul class="pagination">
+            {{ page_string }}
+        </ul>
+    </div>
+
+{% endblock %}

@@ -5,7 +5,7 @@ from django.core.validators import RegexValidator
 
 from app01 import models
 from app01.utils.encrypt import md5
-from app01.models import UserInfo, Admin
+from app01.models import UserInfo, Admin, Movie
 from app01.utils.bootstrap import BootStrapForm, BootStrapModelForm
 
 
@@ -95,3 +95,10 @@ class AdminLoginForm(BootStrapForm):
         """将输入的密码转为密文"""
         password = self.cleaned_data.get("psw")
         return md5(password)
+
+
+class MovieModelForm(BootStrapModelForm):
+    class Meta:
+        model = Movie
+        exclude = ['movie_similarity', 'like_count']
+

@@ -45,36 +45,23 @@
     {% for rating in queryset %}
         <div class="container">
             <div class="poster">
-                <a href="/movie/detail/{{ rating.movie.id }}" class="item">
+                <a href="/movie/detail/{{ rating.id }}" class="item">
                     <div class="poster_div">
-                        <img src="/static/IMDBInfo/poster/{{ rating.movie.imdb_id }}.jpg" alt="电影封面">
+                        <img src="/static/IMDBInfo/poster/{{ rating.imdb_id }}.jpg" alt="电影封面">
                     </div>
                 </a>
             </div>
             <div class="info">
                 <p>
                     电影名：
-                    {{ rating.movie.name }}
+                    {{ rating.name }}
                     <span>
                     {% for foo in rating.movie.get_score_int_range %}
                         <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
                     {% endfor %}
                     </span>
-                    <strong style="color:#e09015">{{ rating.movie.get_score }}</strong>
+                    <strong style="color:#e09015">{{ rating.get_score }}</strong>
                 </p>
-                <p>
-                    我的评分:
-                    <strong style="color:#e09015">{{ rating.score }} </strong>
-                    我的评论:
-                    <strong>{{ rating.comment }}</strong>
-                </p>
-                {#                <a href="#">#}
-                <button type="button" class="btn btn-warning">
-                    <span class="glyphicon glyphicon-trash">
-                        删除评论
-                    </span>
-                </button>
-                {#                </a>#}
             </div>
 
         </div>

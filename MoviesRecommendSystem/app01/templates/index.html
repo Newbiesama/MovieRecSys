@@ -2,6 +2,7 @@
 {% load static %}
 {% block title %} 首页 {% endblock %}
 {% block CSS %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
     <style>
         .item {
             display: block;
@@ -22,19 +23,72 @@
             justify-content: center;
         }
 
+        .banner {
+            height: 530px;
+            width: 100%;
+            position: relative;
+        }
+
+        .banner img {
+            height: 500px;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
     </style>
+
 {% endblock %}
 {% block content %}
-    <div class="container">
-        <div class="jumbotron">
-            <h1>简介</h1>
-            <p>首页会展示部分电影，热门电影会展示评分最高的前100部电影，你可以点击任意一部电影查看它的详细介绍</p>
-            <p>你可以给电影评分，当你评分的电影超过10部，就可以查看网站对你的推荐结果</p>
-            <p>使用分类或搜索功能可以帮助你找到电影</p>
+    <div class="container" style="margin-bottom: 50px;">
+        <div class="sec1" style="padding-top: 0">
+            <div class="banner">
+                <ul class="slides">
+                    <li>
+                        <a href="#"><img src="{% static 'img/p1.jpg' %}"></a>
+                    </li>
+                    <li>
+                        <a href="#"><img src="{% static 'img/p2.jpg' %}"></a>
+                    </li>
+                    <li>
+                        <a href="#"><img src="{% static 'img/p3.jpg' %}"></a>
+                    </li>
+                    <li>
+                        <a href="#"><img src="{% static 'img/p4.jpg' %}"></a>
+                    </li>
+                </ul>
+                <div class="dotbutton">
+                    <ul>
+                        <li class="dotnumb"></li>
+                        <li class="dotnumb"></li>
+                        <li class="dotnumb"></li>
+                        <li class="dotnumb"></li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
+    {% if request.session.info %}
+        <div class="container" style="margin-top: 25px; border-bottom: 2px solid #7c7c7c;">
+            <div class="alert alert-warning" role="alert" style="font-size: 18px">为您推荐</div>
+            <div>
+                {% for movie in rec_movies %}
+                    <a href="/movie/detail/{{ movie.id }}" class="item">
+                        <div class="poster_div">
+                            <img src="/static/IMDBInfo/poster/{{ movie.imdb_id }}.jpg" alt="电影封面">
+                            <p>{{ movie.name }}
+                                <strong style="color:#e09015">{{ movie.get_score }}</strong>
+                            </p>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+    {#        <li role="separator" class="divider"></li>#}
     <!--展示电影图片用-->
-    <div class="container">
+    <div class="container" style="margin-top: 40px">
         {% for movie in queryset %}
             <a href="/movie/detail/{{ movie.id }}" class="item">
                 <div class="poster_div">
@@ -53,4 +107,8 @@
         </ul>
     </div>
 
+{% endblock %}
+
+{% block JS %}
+    <script type="text/javascript" src="{% static 'js/banner.js' %}"></script>
 {% endblock %}
